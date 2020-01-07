@@ -1,0 +1,23 @@
+{
+  "name": "gameserver",
+  "version": "1.0.0",
+  "description": "game server for MadWeek2",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gjrud1470/MadCamp-Week2-gameserver.git"
+  },
+  "author": "Kyoung Hur",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gjrud1470/MadCamp-Week2-gameserver/issues"
+  },
+  "homepage": "https://github.com/gjrud1470/MadCamp-Week2-gameserver#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^2.3.0"
+  }
+}
