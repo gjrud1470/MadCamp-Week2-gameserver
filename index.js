@@ -51,13 +51,17 @@ async function generate_hunters()
 	var generate_flag = GENERATE_FLAG
 
 	var hunter_type = getRandomInt(10);
-	if (hunter_type < 8)
+	if (hunter_type < 7)
 	{
 	    var hunter_id = 0;
 	}
+	else if (hunter_type < 9)
+	{
+	    var hunter_id = 1;
+	}
 	else
 	{
-	    var hunter_id = 0;
+	    var hunter_id = 2;
 	}
 
 	var x = Math.random();
