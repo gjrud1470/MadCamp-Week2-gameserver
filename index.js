@@ -6,7 +6,8 @@ By Kyoung Hur
 
 */
 
-var GAME_COUNTDOWN = 5; // 5 seconds countdown before game starts.
+var TIMER = 500; // a hunter generated every TIMER ms.
+var GENERATE_FLAG = false // make this true to generate hunters.
 
 function User(id, name)
 {
@@ -35,16 +36,42 @@ app.get('/', function(req, res) {
 
 function sleep(sec)
 {
-    return new Promise(resolve => setTimeout(resolve, sec*1000)); // Sleep
+    return new Promise(resolve => setTimeout(resolve, sec)); // Sleep for sec ms
 }
 
-function startGame(room)
+function getRandomInt(max)
 {
-    console.log('Starting game');
-
-
-
+    return Math.floor(Math.random()*Math.floor(max)); // Create random int from 0 to max
 }
+
+async function generate_hunters()
+{
+    var hunter_number = 0;
+    do {
+	var generate_flag = GENERATE_FLAG
+
+	var hunter_type = getRandomInt(10);
+	if (hunter_type < 8)
+	{
+	    var hunter_id = 0;
+	}
+	else
+	{
+	    var hunter_id = 0;
+	}
+
+	var x = Math.random();
+	var y = Math.random();
+
+	//console.log('generated hunter');
+	io.emit('generate_hunter', {id: hunter_id, hunter_number: hunter_number, x: x, y: y});
+
+	hunter_number++;
+	await sleep(TIMER)
+    } while (generate_flag);
+}
+
+
 // Start Server
 const server = http.listen(80, function() {
 	console.log('SERVER GAME STARTED ON PORT: 80');
@@ -85,11 +112,16 @@ io.on('connection', function(socket) {
         }
 
 	if (matchlist.length == 0)
+	{
             match_created = false;
+	    GENERATE_FLAG = false;
+	}
     });
 
     socket.on('create_game', function(name) {
-	if (match_created) {
+	GENERATE_FLAG = false;
+
+	if (false && match_created) {
 	    console.log('match create failed');
 	    socket.emit('create_failed');
 	}
@@ -135,12 +167,53 @@ io.on('connection', function(socket) {
         }
 	if (matchlist.length == 0)
 	    match_created = false;
+	
 	socket.broadcast.emit('user_left_room', name);
     });
 
     socket.on('start_game', function()
     {
 	io.emit('game_started');
+	GENERATE_FLAG = true;
+	generate_hunters();
+    });
+
+    socket.on('player1_move', function(angle, strength)
+    {
+	io.emit('player1_move', {angle: angle, strength: strength});
+    });
+
+    socket.on('player2_move', function(angle, strength)
+    {
+        io.emit('player2_move', {angle: angle, strength: strength});
+    });
+
+    socket.on('player1_shoot', function(angle)
+    {
+        io.emit('player1_shoot', angle);
+    });
+
+    socket.on('player2_shoot', function(angle)
+    {
+        io.emit('player2_shoot', angle);
+    });
+
+    socket.on('stop_game', function()
+    {
+	GENERATE_FLAG = false;
+	match_created = false;
+	matchlist.clear();
+	console.log('game stopped');
+    });
+
+    socket.on('ask_player_dead' function(hit_id)
+    {
+	socket.broadcast.emit('is_player_dead', hit_id);
+    });
+
+    socket.on('player_truly_dead' function(hit_id)
+    {
+	io.emit('player_dead', hit_id);
     });
 
 });
