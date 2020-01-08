@@ -83,10 +83,10 @@ var io = socketio.listen(server);
 
 io.on('connection', function(socket) {
 
-    console.log('A new user '+socket.id+' is connected');
+    //console.log('A new user '+socket.id+' is connected');
 
     socket.on('open_game', function(objectClient) {
-    	console.log(objectClient);
+    	//console.log(objectClient);
     	var user = new User(socket.id, objectClient);
 
     	console.log('User: '+user.id+' name '+user.name);
@@ -206,16 +206,21 @@ io.on('connection', function(socket) {
 	console.log('game stopped');
     });
 
-    socket.on('ask_player_dead' function(hit_id)
+    socket.on('ask_player_dead', function(hit_id)
     {
 	socket.broadcast.emit('is_player_dead', hit_id);
     });
 
-    socket.on('player_truly_dead' function(hit_id)
+    socket.on('player_truly_dead', function(hit_id)
     {
+	console.log('player '+hit_id+' died');
 	io.emit('player_dead', hit_id);
     });
 
+    socket.on('player_not_dead', function(hit_id)
+    {
+	io.emit('player_not_dead', hit_id);
+    });
 });
 
 
